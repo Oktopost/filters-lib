@@ -75,12 +75,24 @@ class FiltersDAO implements IFiltersDAO
 	
 	
 	/**
-	 * @param MySql $conn
+	 * @param Mysql|MySql\IMySqlConnector $conn
 	 * @param string $tableName
 	 */
 	public function __construct($conn, string $tableName)
 	{
-		$this->connector = $conn->getConnector();
+		if ($conn instanceof MySql\IMySqlConnector)
+		{
+			$this->connector = $conn;
+		}
+		else if ($conn instanceof MySql)
+		{
+			$this->connector = $conn->getConnector();
+		}
+		else
+		{
+			throw new \Exception('Connector is not valid');
+		}
+		
 		$this->tableName = $tableName;
 	}
 	

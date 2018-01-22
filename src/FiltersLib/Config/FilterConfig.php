@@ -35,7 +35,7 @@ class FilterConfig
 	 */
 	public function setup($subject, ?string $tableName = null): void
 	{
-		if ($subject instanceof MySql && $tableName)
+		if (($subject instanceof MySql || $subject instanceof MySql\IMySqlConnector)&& $tableName)
 		{
 			$this->dao = new FiltersDAO($subject, $tableName);
 		}
