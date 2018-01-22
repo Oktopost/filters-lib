@@ -1,0 +1,35 @@
+{
+	"name": "oktopost/filters-lib",
+	"type": "library",
+	"license": "MIT",
+	"homepage": "https://github.com/Oktopost/filters-lib",
+	"authors":
+	[
+		{
+			"name": "Daniel Podrabinek",
+			"email": "dpodrabinek@oktopost.com"
+		}
+	],
+	"require": {
+		"php": ">=7.1",
+		"oktopost/squid": "dev-master",
+		"oktopost/objection": "^1.0",
+		"unstable-cacao/structura": "^1.0.4"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^6.5",
+		"satooshi/php-coveralls": "^2.0"
+	},
+	"autoload":
+	{
+		"psr-0":
+		{
+			"FiltersLib\\": "src"
+		}
+	},
+	"scripts":
+	{
+		"test": "./vendor/phpunit/phpunit/phpunit --dont-report-useless-tests",
+		"test-cover": "./vendor/phpunit/phpunit/phpunit --dont-report-useless-tests --coverage-html ./build/cover"
+	}
+}
