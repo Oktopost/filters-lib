@@ -52,10 +52,15 @@ class Filters
 		return $this;
 	}
 	
-	public function getId($payload, $meta = null): string
+	public function get($payload, $meta = null): Record
 	{
 		$record = $this->dao()->getByData(ToString::convert($payload), ToString::convert($meta));
-		return $record->Id;
+		return $record;
+	}
+	
+	public function getId($payload, $meta = null): string
+	{
+		return $this->get($payload, $meta)->Id;
 	}
 	
 	/**
