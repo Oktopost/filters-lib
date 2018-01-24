@@ -7,6 +7,8 @@ CREATE TABLE `Filters` (
     `Metadata` TEXT NULL DEFAULT NULL , 
     
     PRIMARY KEY (`Id`),
+    KEY `k_Created` (`Created`),
+    KEY `k_Touched` (`Touched`),
     KEY `k_Hash` (`Hash`)
 )
 ENGINE = InnoDB 
