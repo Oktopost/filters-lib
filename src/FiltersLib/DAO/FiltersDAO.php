@@ -97,24 +97,6 @@ class FiltersDAO implements IFiltersDAO
 	}
 	
 	
-	public function getByData(string $payload, ?string $meta = null): Record
-	{
-		$hash = $this->generateHash($payload . $meta);
-		$result = $this->connector
-			->select()
-			->from($this->tableName)
-			->byField('Hash', $hash)
-			->queryRow(true);
-		
-		if ($result)
-		{
-			$this->touch($result['Id']);
-			return (new Record())->fromArray($result);
-		}
-		
-		return $this->create($hash, $payload, $meta);
-	}
-	
 	public function getById(string $id): ?Record
 	{
 		$result = $this->connector
@@ -130,5 +112,28 @@ class FiltersDAO implements IFiltersDAO
 		}
 		
 		return null;
+	}
+	
+	public function getByHash(string $hash): ?Record
+	{
+		$result = $this->connector
+			->select()
+			->from($this->tableName)
+			->byField('Hash', $hash)
+			->queryRow(true);
+		
+		if (!$result)
+		{
+			return null;
+		}
+
+		$this->touch($result['Id']);
+		return (new Record())->fromArray($result);
+	}
+	
+	public function getByData(string $payload, ?string $meta = null): Record
+	{
+		$hash = $this->generateHash($payload . $meta);
+		return $this->getByHash($hash) ?: $this->create($hash, $payload, $meta);
 	}
 }

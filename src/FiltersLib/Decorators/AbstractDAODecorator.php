@@ -25,13 +25,18 @@ abstract class AbstractDAODecorator implements IDAODecorator
 		$this->child = $child;
 	}
 	
-	public function getByData(string $payload, ?string $meta = null): Record
-	{
-		return $this->child->getByData($payload, $meta);
-	}
-	
 	public function getById(string $id): ?Record
 	{
 		return $this->child->getById($id);
+	}
+	
+	public function getByHash(string $hash): ?Record
+	{
+		return $this->child->getByHash($hash);
+	}
+	
+	public function getByData(string $payload, ?string $meta = null): Record
+	{
+		return $this->child->getByData($payload, $meta);
 	}
 }
