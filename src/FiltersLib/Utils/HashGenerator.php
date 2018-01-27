@@ -26,20 +26,14 @@ class HashGenerator
 			$extra = self::generate($result, $missing);
 			$result .= substr($extra, 0, $missing);
 		}
-		else if ($resultLength > $length)
-		{
-			$result = substr($result, 0, $length);
-		}
 		
 		return $result;
 	}
 	
 	
-	public static function generate(string $data, ?int $length = 5): string
+	public static function generate(string $data, ?int $length = 6): string
 	{
-		$binHash = md5($data, true);
-		$numHash = unpack('Q', $binHash);
-		
-		return self::dec2any($numHash[1] & 0x0FFFFFFF, $length);
+		$numHash = unpack('V', md5($data, true));
+		return self::dec2any($numHash[1], $length);
 	}
 }
