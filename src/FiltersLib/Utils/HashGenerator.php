@@ -8,15 +8,14 @@ class HashGenerator
 	private const CHARS = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 	
 	
-	private static function dec2any($num, int $length): string
+	private static function dec2any(int $num, int $length): string
 	{
-		$result = "";
+		$result = '';
 		
-		for ($t = floor(log10($num) / log10(self::BASE)); $t >= 0; $t--)
+		while ($num)
 		{
-			$a = floor($num / pow(self::BASE, $t));
-			$result = $result . substr(self::CHARS, $a, 1);
-			$num = $num - ($a * pow(self::BASE, $t));
+			$result = self::CHARS[$num % self::BASE] . $result;
+			$num = floor($num / self::BASE);
 		}
 		
 		$resultLength = strlen($result);
@@ -35,11 +34,12 @@ class HashGenerator
 		return $result;
 	}
 	
+	
 	public static function generate(string $data, ?int $length = 5): string
 	{
 		$binHash = md5($data, true);
 		$numHash = unpack('Q', $binHash);
 		
-		return self::dec2any($numHash[1] & 0x000FFFFF, $length);
+		return self::dec2any($numHash[1] & 0x0FFFFFFF, $length);
 	}
 }
