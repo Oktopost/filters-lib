@@ -4,6 +4,7 @@ namespace FiltersLib\DAO;
 
 use FiltersLib\Record;
 use FiltersLib\Base\DAO\IFiltersDAO;
+use FiltersLib\Utils\HashGenerator;
 
 use Squid\MySql;
 
@@ -17,15 +18,10 @@ class FiltersDAO implements IFiltersDAO
 	private $tableName;
 	
 	
-	private function generateHash(string $data): string
-	{
-		return base_convert(md5($data), 16, 36);
-	}
-	
 	private function generateId(string $hash): string
 	{
 		$milliseconds = (int)round(microtime(true) * 1000);
-		$string = $hash . base_convert($milliseconds, 10, 36) . mt_rand(100000, 1000000);
+		$string = md5($hash) . base_convert($milliseconds, 10, 36) . mt_rand(100000, 1000000);
 		
 		$result = substr($string, 0, 35);
 		
@@ -133,7 +129,7 @@ class FiltersDAO implements IFiltersDAO
 	
 	public function getByData(string $payload, ?string $meta = null): Record
 	{
-		$hash = $this->generateHash($payload . $meta);
+		$hash = HashGenerator::generate($payload . $meta);
 		return $this->getByHash($hash) ?: $this->create($hash, $payload, $meta);
 	}
 }

@@ -2,7 +2,7 @@ CREATE TABLE `Filters` (
     `Id` CHAR(35) NOT NULL , 
     `Created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , 
     `Touched` TIMESTAMP on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
-    `Hash` CHAR(25) NOT NULL , 
+    `Hash` CHAR(5) NOT NULL , 
     `Payload` TEXT NOT NULL , 
     `Metadata` TEXT NULL DEFAULT NULL , 
     
