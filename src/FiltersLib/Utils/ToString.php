@@ -28,7 +28,7 @@ class ToString
 		{
 			return $data->asString();
 		}
-		else if (is_scalar($data))
+		else if (is_scalar($data) || is_array($data) || is_object($data))
 		{
 			return json_encode($data);
 		}
