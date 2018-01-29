@@ -21,9 +21,7 @@ class FilterConfig
 	public function getDao()
 	{
 		if (!$this->dao)
-		{
 			throw new \Exception('DAO is not set');
-		}
 		
 		return $this->dao;
 	}

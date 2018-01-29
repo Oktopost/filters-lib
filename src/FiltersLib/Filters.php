@@ -63,11 +63,6 @@ class Filters
 		return $this->get($payload, $meta)->Id;
 	}
 	
-	public function getByHash(string $hash): ?Record
-	{
-		return $this->dao()->getByHash($hash);
-	}
-	
 	/**
 	 * @param string $id
 	 * @param string|Mapper $opt

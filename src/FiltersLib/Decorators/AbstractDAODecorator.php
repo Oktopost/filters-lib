@@ -2,10 +2,10 @@
 namespace FiltersLib\Decorators;
 
 
+use FiltersLib\Record;
+
 use FiltersLib\Base\IDAODecorator;
 use FiltersLib\Base\DAO\IFiltersDAO;
-
-use FiltersLib\Record;
 
 
 abstract class AbstractDAODecorator implements IDAODecorator
@@ -28,11 +28,6 @@ abstract class AbstractDAODecorator implements IDAODecorator
 	public function getById(string $id): ?Record
 	{
 		return $this->child->getById($id);
-	}
-	
-	public function getByHash(string $hash): ?Record
-	{
-		return $this->child->getByHash($hash);
 	}
 	
 	public function getByData(string $payload, ?string $meta = null): Record

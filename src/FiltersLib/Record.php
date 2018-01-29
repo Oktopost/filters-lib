@@ -9,11 +9,11 @@ use Objection\LiteObject;
 
 
 /**
- * @property string $Id
- * @property string $Created
- * @property string $Touched
- * @property string $Hash
- * @property IData $Payload
+ * @property string		$Id
+ * @property string		$Created
+ * @property string		$Touched
+ * @property string		$Hash
+ * @property IData		$Payload
  * @property IData|null $Metadata
  */
 class Record extends LiteObject
@@ -66,5 +66,16 @@ class Record extends LiteObject
 		}
 		
 		return $result;
+	}
+	
+	public function toRawData(): array 
+	{
+		return $this->toArray([], ['Created', 'Touched']);
+	}
+	
+	
+	public static function createFromRawData(array $raw): Record
+	{
+		 return (new Record())->fromArray($raw);
 	}
 }
