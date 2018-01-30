@@ -2,6 +2,7 @@
 namespace FiltersLib\DAO;
 
 
+use FiltersLib\Data;
 use FiltersLib\Record;
 use FiltersLib\Base\DAO\IFiltersDAO;
 use FiltersLib\Utils\IdGenerator;
@@ -34,55 +35,65 @@ class FiltersDAO implements IFiltersDAO
 		return 'FiltersLib.Lock.' . $this->tableName . '.' . $data;
 	}
 	
-	private function unsafeInsert(Record $record): void
+	private function unsafeInsert(Record $record): Record
 	{
 		$idExists = true;
+		$lock = $this->connector->lock();
+		$lockName = '';
 		
 		for ($i = 0; ($i < 3 && $idExists); $i++)
 		{
-			$record->Id = IdGenerator::generateId($record->Hash);
+			$record->Id = IdGenerator::generateId();
+			$lockName = $this->getLockName($record->Id);
 			
-			$idExists = $this->connector->select()
-				->from($this->tableName)
-				->byId($record->Id)
-				->queryExists();
+			if (!$lock->lock($lockName))
+				throw new \Exception('Error while trying to lock ' . $record->Id);
+			
+			try
+			{
+				$idExists = $this->connector->select()
+					->from($this->tableName)
+					->byId($record->Id)
+					->queryExists();
+			}
+			catch (\Throwable $t)
+			{
+				$lock->unlock($lockName);
+				throw $t;
+			}
+			
 		}
 		
 		if ($idExists)
 		{
-			throw new \Exception('Failed to generate Id for hash ' . $record->Hash);
+			throw new \Exception('Failed to generate Id');
 		}
 		
-		$this->connector
-			->insert()
-			->into($this->tableName)
-			->values($record->toRawData())
-			->executeDml();
+		try
+		{
+			$this->connector
+				->insert()
+				->into($this->tableName)
+				->values($record->toRawData())
+				->executeDml();
+		}
+		finally
+		{
+			$lock->unlock($lockName);
+		}
+		
+		return $record;
 	}
 	
 	private function create(string $hash, string $payload, ?string $meta = null): Record
 	{
 		$record = new Record();
 		
-		$record->Payload	= $payload;
-		$record->Metadata	= $meta;
+		$record->Payload	= new Data($payload);
+		$record->Metadata	= $meta ? new Data($meta) : null;
 		$record->Hash		= $hash;
 		
-		$lockName = $this->getLockName($hash);
-		
-		$lock = $this->connector->lock();
-		
-		if (!$lock->lock($lockName))
-			throw new \Exception('Error while trying to lock ' . $lockName);
-		
-		try
-		{
-			return $this->unsafeInsert($record);
-		}
-		finally
-		{
-			$lock->unlock($lockName);
-		}
+		return $this->unsafeInsert($record);
 	}
 	
 	private function touch(string $id): void
@@ -141,6 +152,7 @@ class FiltersDAO implements IFiltersDAO
 	public function getByData(string $payload, ?string $meta = null): Record
 	{
 		$hash = HashGenerator::generate($payload . $meta);
+		
 		$records = $this->getByHash($hash);
 		$match = null;
 		

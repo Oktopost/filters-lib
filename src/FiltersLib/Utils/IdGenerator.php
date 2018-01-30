@@ -4,13 +4,12 @@ namespace FiltersLib\Utils;
 
 class IdGenerator
 {
-	public static function generateId(string $hash): string
+	public static function generateId(): string
 	{
 		$milliseconds = (int)round(microtime(true) * 1000);
-		$string = md5($hash) . base_convert($milliseconds, 10, 36) . mt_rand(100000, 1000000);
+		$random = mt_rand(100000, 1000000) . mt_rand(100000, 1000000);;
+		$result = base_convert($milliseconds . $random, 10, 36);
 		
-		$result = substr($string, 0, 35);
-		
-		return $result;
+		return substr($result, strlen($result) - 12);
 	}
 }
